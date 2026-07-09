@@ -3,18 +3,7 @@ import type { Player, GameData } from '../types'
 import { ScoreSection } from '../components/ScoreSection'
 // Mini Golf rendering only; settings handled at App level
 
-// Simple minigolf definition: N holes with a TOTAL row at the end
-export function createMiniGolfData(holes: number): GameData {
-  const entries = Array.from({ length: holes }, (_, i) => ({ name: `Hole ${i + 1}`, max_point: null }))
-  entries.push({ name: 'TOTAL', max_point: null })
-  return {
-    title: `Mini Golf - ${holes} holes`,
-    upper_section: entries,
-    lower_section: []
-  }
-}
-
-export function buildMiniGolfRowConfig() {
+function buildMiniGolfRowConfig() {
   return new Proxy({}, {
     get: (_target, prop: string) => {
       if (prop === 'TOTAL') {
