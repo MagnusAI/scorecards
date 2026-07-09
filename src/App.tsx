@@ -8,7 +8,8 @@ import { usePlayerManagement } from './hooks/usePlayerManagement'
 import { useSynchronizedScroll } from './hooks/useSynchronizedScroll'
 import { useDynamicGrid } from './hooks/useDynamicGrid'
 import { YatzySections } from './pages/YatzyPage'
-import { MiniGolfSection, createMiniGolfData } from './pages/MiniGolfPage'
+import { MiniGolfSection } from './pages/MiniGolfPage'
+import { createMiniGolfData } from './pages/miniGolfData'
 import controls from './components/styles/Controls.module.css'
 
 // Type assertion for sheet data
@@ -29,15 +30,16 @@ function App() {
     removeLatestPlayer,
     updatePlayerName,
     updateScore,
+    resetScores,
     canRemovePlayer
   } = usePlayerManagement()
 
   const { playerHeaderRef, upperTableRef, lowerTableRef } = useSynchronizedScroll()
   const [sheetType, setSheetType] = useState<'yatzy' | 'minigolf'>('yatzy')
-  const miniGolfData = createMiniGolfData(12)
-  const pageTitle = sheetType === 'yatzy' ? gameData.title : miniGolfData.title
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [miniGolfHoles, setMiniGolfHoles] = useState(9)
+  const miniGolfData = createMiniGolfData(miniGolfHoles)
+  const pageTitle = sheetType === 'yatzy' ? gameData.title : miniGolfData.title
   const [yatzyDice, setYatzyDice] = useState(6)
   const [yatzyBonusThreshold, setYatzyBonusThreshold] = useState(84)
   const [yatzyBonusPoints, setYatzyBonusPoints] = useState(50)
@@ -96,7 +98,7 @@ function App() {
           />
         ) : (
           <MiniGolfSection
-            data={createMiniGolfData(miniGolfHoles)}
+            data={miniGolfData}
             players={players}
             onScoreChange={(playerId, category, value) => updateScore(playerId, category, value)}
             tableRef={lowerTableRef as React.RefObject<HTMLDivElement>}
@@ -127,11 +129,17 @@ function App() {
             </div>
             <div className={settingsStyles.actions}>
               <button className={controls.resetButton} onClick={() => {
+                if (window.confirm('Start a new game? This clears all scores (player names are kept).')) {
+                  resetScores();
+                  setSettingsOpen(false);
+                }
+              }}>New game</button>
+              <button className={controls.resetButton} onClick={() => {
                 setMiniGolfHoles(9);
                 setYatzyDice(6);
                 setYatzyBonusThreshold(84);
                 setYatzyBonusPoints(50);
-              }}>Reset</button>
+              }}>Reset settings</button>
               <button className={controls.addPlayerButton} onClick={() => setSettingsOpen(false)}>Close</button>
             </div>
           </div>

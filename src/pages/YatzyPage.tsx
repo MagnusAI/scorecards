@@ -1,53 +1,12 @@
 import React from 'react'
 import sheetData from '../assets/sheet-reference.json'
-import type { GameData, Player } from '../types'
-import { CALCULATED_ROWS } from '../constants/gameConfig'
+import type { GameData, Player, ScoreEntry, ScoreSectionRowConfig } from '../types'
+import { CALCULATED_ROWS, filterLowerEntries } from '../constants/gameConfig'
 import { ScoreSection } from '../components/ScoreSection'
 import { useScoreCalculations } from '../hooks/useScoreCalculations'
 // Yatzy rendering only; settings are handled at App level
 
 const gameData = sheetData as GameData
-
-export function buildYatzyRowConfig(
-  _players: Player[],
-  calculateUpperTotal: (p: Player) => number,
-  calculateBonus: (p: Player) => number,
-  calculateGrandTotal: (p: Player) => number,
-  numDice: number) {
-  const config: Record<string, { type: 'normal' | 'total' | 'bonus' | 'grand-total'; isCalculated: boolean; isGrandTotal?: boolean; calculateValue?: (p: Player) => number }> = {}
-
-  // Upper section
-  for (const entry of gameData.upper_section) {
-    if (entry.name === CALCULATED_ROWS.UPPER_TOTAL) {
-      config[entry.name] = { type: 'total', isCalculated: true, calculateValue: calculateUpperTotal }
-    } else if (entry.name === CALCULATED_ROWS.BONUS) {
-      config[entry.name] = { type: 'bonus', isCalculated: true, calculateValue: calculateBonus }
-    } else {
-      config[entry.name] = { type: 'normal', isCalculated: false }
-    }
-  }
-
-  // Lower section
-  const filteredLower = gameData.lower_section.filter(entry => {
-    if (numDice >= 6) return true
-    // Remove entries unachievable with fewer than 6 dice
-    const name = entry.name.toLowerCase()
-    if (name.includes('three pairs')) return false
-    if (name.includes('two three')) return false
-    if (name.includes('royal')) return false
-    return true
-  })
-
-  for (const entry of filteredLower) {
-    if (entry.name === CALCULATED_ROWS.GRAND_TOTAL) {
-      config[entry.name] = { type: 'grand-total', isCalculated: true, isGrandTotal: true, calculateValue: calculateGrandTotal }
-    } else {
-      config[entry.name] = { type: 'normal', isCalculated: false }
-    }
-  }
-
-  return config
-}
 
 export function YatzySections({
   players,
@@ -68,37 +27,60 @@ export function YatzySections({
   bonusPoints: number
   numDice: number
 }) {
-  const { calculateUpperTotal, calculateBonus, calculateGrandTotal } = useScoreCalculations({ bonusThreshold, bonusPoints })
-  const rowConfig = buildYatzyRowConfig(players, calculateUpperTotal, calculateBonus, calculateGrandTotal, numDice)
+  const { calculateUpperTotal, calculateBonus, calculateGrandTotal } = useScoreCalculations({ bonusThreshold, bonusPoints, numDice })
+
+  // Bonus row is calculated (no stored score keyed by its name), so its label
+  // can safely reflect the configured threshold/points
+  const bonusLabel = `BONUS ${bonusPoints} points (at ${bonusThreshold})`
+  const upperEntries: ScoreEntry[] = gameData.upper_section.map(entry =>
+    entry.name === CALCULATED_ROWS.BONUS
+      ? { ...entry, name: bonusLabel, max_point: bonusPoints }
+      : entry
+  )
+
+  // Upper and lower sections each get their own config: both contain a row
+  // named "TOTAL", so a shared map would let one overwrite the other
+  const upperRowConfig: Record<string, ScoreSectionRowConfig> = {}
+  for (const entry of upperEntries) {
+    if (entry.name === CALCULATED_ROWS.UPPER_TOTAL) {
+      upperRowConfig[entry.name] = { type: 'total', isCalculated: true, calculateValue: calculateUpperTotal }
+    } else if (entry.name === bonusLabel) {
+      upperRowConfig[entry.name] = { type: 'bonus', isCalculated: true, calculateValue: calculateBonus }
+    } else {
+      upperRowConfig[entry.name] = { type: 'normal', isCalculated: false }
+    }
+  }
+
+  const lowerEntries = filterLowerEntries(gameData.lower_section, numDice)
+  const lowerRowConfig: Record<string, ScoreSectionRowConfig> = {}
+  for (const entry of lowerEntries) {
+    if (entry.name === CALCULATED_ROWS.GRAND_TOTAL) {
+      lowerRowConfig[entry.name] = { type: 'grand-total', isCalculated: true, isGrandTotal: true, calculateValue: calculateGrandTotal }
+    } else {
+      lowerRowConfig[entry.name] = { type: 'normal', isCalculated: false }
+    }
+  }
 
   return (
     <div>
       <ScoreSection
         title="Upper Section"
-        entries={gameData.upper_section}
+        entries={upperEntries}
         players={players}
         onScoreChange={onScoreChange}
-        rowConfigByEntryName={rowConfig}
+        rowConfigByEntryName={upperRowConfig}
         tableRef={upperTableRef}
         hideTotals={hideTotals}
       />
       <ScoreSection
         title="Lower Section"
-        entries={gameData.lower_section.filter(entry => {
-          if (numDice >= 6) return true
-          const name = entry.name.toLowerCase()
-          if (name.includes('three pairs')) return false
-          if (name.includes('two three')) return false
-          if (name.includes('royal')) return false
-          return true
-        })}
+        entries={lowerEntries}
         players={players}
         onScoreChange={onScoreChange}
-        rowConfigByEntryName={rowConfig}
+        rowConfigByEntryName={lowerRowConfig}
         tableRef={lowerTableRef}
         hideTotals={hideTotals}
       />
     </div>
   )
 }
-

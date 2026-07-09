@@ -44,8 +44,9 @@ export function usePlayerManagement() {
     ))
   }
 
-  const resetGame = () => {
-    setPlayers(DEFAULT_PLAYERS)
+  // Clear all scores but keep the players and their names
+  const resetScores = () => {
+    setPlayers(prev => prev.map(player => ({ ...player, scores: {} })))
   }
 
   const canRemovePlayer = players.length > GAME_CONFIG.MIN_PLAYERS
@@ -56,7 +57,7 @@ export function usePlayerManagement() {
     removeLatestPlayer,
     updatePlayerName,
     updateScore,
-    resetGame,
+    resetScores,
     canRemovePlayer
   }
 }

@@ -1,3 +1,5 @@
+import type { Player, ScoreEntry } from '../types'
+
 // Game configuration constants
 export const GAME_CONFIG = {
   MIN_PLAYERS: 2,
@@ -23,7 +25,18 @@ export const CALCULATED_ROWS = {
   GRAND_TOTAL: 'TOTAL'
 } as const
 
-export const DEFAULT_PLAYERS: Array<{ id: string; name: string; scores: {} }> = [
+export const DEFAULT_PLAYERS: Player[] = [
   { id: '1', name: 'Player 1', scores: {} },
   { id: '2', name: 'Player 2', scores: {} }
 ]
+
+// Combinations that require six dice to be achievable
+const SIX_DICE_ONLY_PATTERNS = ['three pairs', 'two three', 'royal']
+
+export function filterLowerEntries(entries: ScoreEntry[], numDice: number): ScoreEntry[] {
+  if (numDice >= 6) return entries
+  return entries.filter(entry => {
+    const name = entry.name.toLowerCase()
+    return !SIX_DICE_ONLY_PATTERNS.some(pattern => name.includes(pattern))
+  })
+}
