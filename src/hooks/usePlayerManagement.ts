@@ -3,11 +3,12 @@ import { GAME_CONFIG, DEFAULT_PLAYERS } from '../constants/gameConfig'
 import { useLocalStorage } from './useLocalStorage'
 
 /**
- * Custom hook for managing players state and operations
+ * Custom hook for managing players state and operations.
+ * Each game passes its own storage key so scores don't leak between games.
  */
-export function usePlayerManagement() {
+export function usePlayerManagement(storageKey: string = GAME_CONFIG.STORAGE_KEY) {
   const [players, setPlayers] = useLocalStorage<Player[]>(
-    GAME_CONFIG.STORAGE_KEY,
+    storageKey,
     DEFAULT_PLAYERS
   )
 

@@ -45,7 +45,12 @@
 }
 
 .addPlayerButton { background-color: #10b981; }
-.addPlayerButton:hover { background-color: #059669; }
+.addPlayerButton:hover:not(:disabled) { background-color: #059669; }
+.addPlayerButton:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
 
 .removePlayerButtonHeader { background-color: #ef4444; }
 .removePlayerButtonHeader:hover:not(:disabled) { background-color: #dc2626; }

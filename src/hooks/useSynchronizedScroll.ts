@@ -10,20 +10,20 @@ export function useSynchronizedScroll() {
   const lowerTableRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    const playerHeader = playerHeaderRef.current
-    const upperTable = upperTableRef.current
-    const lowerTable = lowerTableRef.current
+    // Sheets with a single table only attach some of the refs
+    const elements = [playerHeaderRef.current, upperTableRef.current, lowerTableRef.current]
+      .filter((el): el is HTMLDivElement => el !== null)
 
-    if (!playerHeader || !upperTable || !lowerTable) return
+    if (elements.length < 2) return
 
     let isScrolling = false
 
-    const syncScroll = (source: HTMLDivElement, targets: HTMLDivElement[]) => {
+    const syncScroll = (source: HTMLDivElement) => {
       if (isScrolling) return
-      
+
       isScrolling = true
       requestAnimationFrame(() => {
-        targets.forEach(target => {
+        elements.forEach(target => {
           if (target !== source) {
             target.scrollLeft = source.scrollLeft
           }
@@ -32,20 +32,14 @@ export function useSynchronizedScroll() {
       })
     }
 
-    const allElements = [playerHeader, upperTable, lowerTable]
-
-    const handlePlayerHeaderScroll = () => syncScroll(playerHeader, allElements)
-    const handleUpperScroll = () => syncScroll(upperTable, allElements)
-    const handleLowerScroll = () => syncScroll(lowerTable, allElements)
-
-    playerHeader.addEventListener('scroll', handlePlayerHeaderScroll)
-    upperTable.addEventListener('scroll', handleUpperScroll)
-    lowerTable.addEventListener('scroll', handleLowerScroll)
+    const handlers = elements.map(el => {
+      const handler = () => syncScroll(el)
+      el.addEventListener('scroll', handler)
+      return [el, handler] as const
+    })
 
     return () => {
-      playerHeader.removeEventListener('scroll', handlePlayerHeaderScroll)
-      upperTable.removeEventListener('scroll', handleUpperScroll)
-      lowerTable.removeEventListener('scroll', handleLowerScroll)
+      handlers.forEach(([el, handler]) => el.removeEventListener('scroll', handler))
     }
   }, [])
 
