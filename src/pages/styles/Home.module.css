@@ -1,0 +1,166 @@
+.home {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 16px;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.homeHeader {
+  text-align: center;
+  padding: 24px 0 8px;
+}
+
+.homeHeader h1 {
+  font-size: 1.75rem;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.subtitle {
+  margin: 8px 0 0;
+  color: var(--text-secondary);
+}
+
+.sectionTitle {
+  margin: 24px 0 0;
+  font-size: 1rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.gameCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  width: 100%;
+  padding: 16px;
+  background: var(--section-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  text-align: left;
+  transition: transform 0.1s, border-color 0.2s;
+}
+
+.gameCard:hover {
+  border-color: var(--accent-color);
+}
+
+.gameCard:active {
+  transform: scale(0.98);
+}
+
+.cardEmoji {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.cardTitle {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.cardDescription {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+.createCard {
+  border-style: dashed;
+  border-width: 2px;
+  background: transparent;
+}
+
+.customCardWrapper {
+  position: relative;
+}
+
+.deleteButton {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  background: var(--row-bg);
+}
+
+.deleteButton:hover {
+  background: #ef4444;
+  color: white;
+}
+
+/* Custom card builder */
+
+.builderForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.builderField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.builderField label {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.builderField input {
+  padding: 10px 12px;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-size: 16px;
+}
+
+.hint {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.builderRow {
+  display: flex;
+  gap: 8px;
+}
+
+.builderRow input {
+  flex: 1;
+}
+
+.removeRowButton {
+  padding: 0 14px;
+  border-radius: 8px;
+  background: var(--row-bg);
+  color: var(--text-secondary);
+}
+
+.removeRowButton:hover {
+  background: #ef4444;
+  color: white;
+}
+
+.builderActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+  padding-bottom: 24px;
+}
