@@ -1,69 +1,40 @@
-# React + TypeScript + Vite
+# Score Cards 🎲⛳🥏🃏
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A mobile-first score sheet app for real-world games. You bring the dice, clubs, or cards — the app replaces pen and paper, keeps everyone's scores, and does the math.
 
-Currently, two official plugins are available:
+**▶ Use it here: https://magnusai.github.io/scorecards/**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+No install, no accounts, no backend. Scores are saved in your browser, so you can close the tab mid-game and pick up where you left off.
 
-## Expanding the ESLint configuration
+## What's in it
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Yatzy** — 6-dice "super yatzy" with upper-section bonus and all combinations. Dice count and bonus rules are configurable, and the sheet adapts (fewer dice hides the six-dice-only rows).
+- **Mini Golf & Disc Golf** — strokes per hole, adjustable hole count, lowest total wins.
+- **500** — points per round for the card game, first to 500 wins.
+- **Custom cards** — build your own score card: name it, type in the rows you want to score, and a total row is added automatically. Perfect for whatever game night comes up with.
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Small touches that matter at the table:
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+- Totals are **hidden by default** behind a 👁️ toggle — nobody knows who's winning until the reveal.
+- Each game keeps its own players and scores; "New game" clears scores but keeps the names.
+- Enter `0` to cross out a category you're sacrificing.
+- Designed for phones (portrait), with sticky player names and synchronized scrolling for many players.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Running locally
+
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Then open **http://localhost:5173/scorecards/** — note the `/scorecards/` base path, which matches the GitHub Pages URL.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Other scripts: `npm run build` (type-check + production build), `npm run lint`, `npm run preview`.
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Tech
+
+React 19 + TypeScript + Vite, CSS Modules, and a tiny hand-rolled hash router — no other runtime dependencies. Pushing to `main` deploys to GitHub Pages via GitHub Actions.
+
+## More documentation
+
+Architecture, how to add a game template, storage details, and the roadmap live in the **[project wiki](https://github.com/MagnusAI/scorecards/wiki)**.
